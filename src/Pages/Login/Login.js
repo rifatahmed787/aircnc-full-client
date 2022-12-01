@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import PrimaryButton from "../../components/Button/PrimaryButton";
 
 const Login = () => {
+  const handleLogin = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <div className="flex justify-center items-center pt-8">
       <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900">

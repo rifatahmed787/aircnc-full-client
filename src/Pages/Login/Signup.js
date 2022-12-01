@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import toast from "react-hot-toast";
 
 import { Link } from "react-router-dom";
 import PrimaryButton from "../../components/Button/PrimaryButton";
@@ -15,7 +16,34 @@ const Signup = () => {
     const image = form.image.files[0];
     const email = form.email.value;
     const password = form.password.value;
-    console.log(name, image, email, password);
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const url =
+      "https://api.imgbb.com/1/upload?key=e71074544c3c5587f45dcaba824a7c10";
+
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((imageData) => {
+        createUser(email, password)
+          .then((result) => {
+            updateUserProfile(name, imageData.data.display_url)
+              .then(() => {
+                verifyEmail()
+                  .then(() => {
+                    toast.success("Please check your email for verification");
+                  })
+                  .catch((error) => console.error(error));
+              })
+              .catch((error) => console.error(error));
+          })
+          .catch((error) => console.error(error));
+      })
+      .catch((error) => console.error(error));
   };
 
   return (

@@ -1,11 +1,21 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 import PrimaryButton from "../../components/Button/PrimaryButton";
 import { AuthContext } from "../../contexts/AuthProvider";
 
 const Navbar = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout().then(() => {
+      toast.success("Successfully loged out");
+      navigate("/");
+    });
+  };
+
   return (
     <header className="text-gray-900 body-font shadow-sm">
       <div className=" mx-auto flex flex-wrap py-5 px-20 flex-col md:flex-row items-center">
@@ -72,7 +82,9 @@ const Navbar = () => {
                         ></path>
                       </svg>
 
-                      <span className="mx-1">Sign Out</span>
+                      <span onClick={handleLogout} className="mx-1">
+                        Sign Out
+                      </span>
                     </div>
                   </div>
                 )}

@@ -1,18 +1,13 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCudqDszOy2Isp-dm2W6rYTuQQWVaAlIGs",
-  authDomain: "aircnc-e0673.firebaseapp.com",
-  projectId: "aircnc-e0673",
-  storageBucket: "aircnc-e0673.appspot.com",
-  messagingSenderId: "274385808785",
-  appId: "1:274385808785:web:bed0f86f27c4530006be30",
+  apiKey: process.env.REACT_APP_apiKey,
+  authDomain: process.env.REACT_APP_authDomain,
+  projectId: process.env.REACT_APP_projectId,
+  storageBucket: process.env.REACT_APP_storageBucket,
+  messagingSenderId: process.env.REACT_APP_messagingSenderId,
+  appId: process.env.REACT_APP_appId,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export default app;
