@@ -12,7 +12,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout().then(() => {
       toast.success("Successfully loged out");
-      navigate("/");
+      navigate("/login");
     });
   };
 

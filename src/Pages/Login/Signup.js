@@ -1,14 +1,26 @@
 import React, { useContext } from "react";
 import toast from "react-hot-toast";
 
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import PrimaryButton from "../../components/Button/PrimaryButton";
+import SmallSpinner from "../../components/Spinner/SmallSpinner";
 import { AuthContext } from "../../contexts/AuthProvider";
 
 const Signup = () => {
-  const { createUser, updateUserProfile, verifyEmail, loading } =
-    useContext(AuthContext);
+  const {
+    createUser,
+    updateUserProfile,
+    verifyEmail,
+    loading,
+    setLoading,
+    signInWithGoogle,
+  } = useContext(AuthContext);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  //handle email & password base signup
   const handleSignUp = (event) => {
     event.preventDefault();
     const form = event.target;
@@ -36,14 +48,33 @@ const Signup = () => {
                 verifyEmail()
                   .then(() => {
                     toast.success("Please check your email for verification");
+                    navigate(from, { replace: true });
                   })
                   .catch((error) => console.error(error));
               })
               .catch((error) => console.error(error));
           })
-          .catch((error) => console.error(error));
+          .catch((error) => {
+            toast.error(error.message);
+            setLoading(false);
+          });
       })
       .catch((error) => console.error(error));
+  };
+
+  //handle google signup
+  const handleGoogle = () => {
+    signInWithGoogle()
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast.success("Successfully signed up");
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
   };
 
   return (
@@ -122,7 +153,7 @@ const Signup = () => {
                 type="submit"
                 classes="w-full px-8 py-3 font-semibold rounded-md bg-gray-900 hover:bg-gray-700 hover:text-white text-gray-100"
               >
-                Sign up
+                {loading ? <SmallSpinner /> : "Sign up"}
               </PrimaryButton>
             </div>
           </div>
@@ -135,7 +166,11 @@ const Signup = () => {
           <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
         </div>
         <div className="flex justify-center space-x-4">
-          <button aria-label="Log in with Google" className="p-3 rounded-sm">
+          <button
+            onClick={handleGoogle}
+            aria-label="Log in with Google"
+            className="p-3 rounded-sm"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 32 32"

@@ -1,10 +1,65 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import PrimaryButton from "../../components/Button/PrimaryButton";
+import SmallSpinner from "../../components/Spinner/SmallSpinner";
+import { AuthContext } from "../../contexts/AuthProvider";
 
 const Login = () => {
+  const [userEmail, setUserEmail] = useState("");
+  const { signin, loading, setLoading, signInWithGoogle, resetPassword } =
+    useContext(AuthContext);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  //handle login
   const handleLogin = (event) => {
     event.preventDefault();
+    const form = event.target;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    signin(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast.success("Successfully loged in");
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
+  };
+
+  //signin with google
+  const handleGoogleSignin = () => {
+    signInWithGoogle()
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast.success("Successfully loged in");
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
+  };
+
+  //reset password
+  const forgetPassword = () => {
+    resetPassword(userEmail)
+      .then(() => {
+        toast.success("Please check your email for reset password");
+        setLoading(false);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
   };
 
   return (
@@ -17,6 +72,7 @@ const Login = () => {
           </p>
         </div>
         <form
+          onSubmit={handleLogin}
           noValidate=""
           action=""
           className="space-y-6 ng-untouched ng-pristine ng-valid"
@@ -27,6 +83,7 @@ const Login = () => {
                 Email address
               </label>
               <input
+                onBlur={(event) => setUserEmail(event.target.value)}
                 type="email"
                 name="email"
                 id="email"
@@ -58,12 +115,15 @@ const Login = () => {
               type="submit"
               classes="w-full px-8 py-3 font-semibold rounded-md bg-gray-900 hover:bg-gray-700 hover:text-white text-gray-100"
             >
-              Sign in
+              {loading ? <SmallSpinner /> : "Sign in"}
             </PrimaryButton>
           </div>
         </form>
         <div className="space-y-1">
-          <button className="text-xs hover:underline text-gray-400">
+          <button
+            onClick={forgetPassword}
+            className="text-xs hover:underline text-gray-400"
+          >
             Forgot password?
           </button>
         </div>
@@ -75,7 +135,11 @@ const Login = () => {
           <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
         </div>
         <div className="flex justify-center space-x-4">
-          <button aria-label="Log in with Google" className="p-3 rounded-sm">
+          <button
+            onClick={handleGoogleSignin}
+            aria-label="Log in with Google"
+            className="p-3 rounded-sm"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 32 32"
@@ -108,7 +172,6 @@ const Login = () => {
           <Link to="/signup" className="hover:underline text-gray-600">
             Sign up
           </Link>
-          .
         </p>
       </div>
     </div>
